@@ -37,7 +37,7 @@ class Battle:
     async def sendHit(self):
         while not self.stop_event.is_set():
             if self.superHit:
-                await asyncio.sleep(0.4)
+                await asyncio.sleep(0.1)
                 continue
             
             content = [
