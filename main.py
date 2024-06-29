@@ -20,18 +20,23 @@ def split_chunk(var):
 
 async def main():
     init()
-    user = Pixel()
-    stats = user.getStats()
-    users = user.getUsers()
     battle = Battle()
-    
-    print(f"👻 {Fore.CYAN+Style.BRIGHT}[ User ]\t\t: {Fore.RED+Style.BRIGHT}[ Username ] {users.get('username', 'Unknown')}")
-    print(f"👻 {Fore.CYAN+Style.BRIGHT}[ User ]\t\t: {Fore.RED+Style.BRIGHT}[ Balance ] {split_chunk(str(int(users['clicksCount'])))} Coins")
-    print(f"👻 {Fore.YELLOW+Style.BRIGHT}[ User Stats ]\t: {Fore.GREEN+Style.BRIGHT}[ Wins ] {split_chunk(str(stats['wins']))} {Fore.YELLOW+Style.BRIGHT}| {Fore.BLUE+Style.BRIGHT}[ Loses ] {split_chunk(str(stats['loses']))} {Fore.YELLOW+Style.BRIGHT}| {Fore.RED+Style.BRIGHT}[ Battles Count ] {split_chunk(str(stats['battlesCount']))} {Fore.YELLOW+Style.BRIGHT}| {Fore.WHITE+Style.BRIGHT}[ Winrate ] {((stats['wins'] / stats['battlesCount']) * 100 ):.2f}%")
-    print(f"👻 {Fore.YELLOW+Style.BRIGHT}[ User Stats ]\t: {Fore.GREEN+Style.BRIGHT}[ Wins Reward ] {split_chunk(str(stats['winsReward']))} {Fore.YELLOW+Style.BRIGHT}| {Fore.BLUE+Style.BRIGHT}[ Loses Reward ] {split_chunk(str(stats['losesReward']))} {Fore.YELLOW+Style.BRIGHT}| {Fore.RED+Style.BRIGHT}[ Total Earned ] {split_chunk(str(stats['winsReward'] + stats['losesReward']))}")
-    print(f"👻 {Fore.YELLOW+Style.BRIGHT}[ Fight Stats ]\t: {Fore.GREEN+Style.BRIGHT}[ Wins ] {split_chunk(str(battle.wins))} {Fore.YELLOW+Style.BRIGHT}| {Fore.BLUE+Style.BRIGHT}[ Loses ] {split_chunk(str(battle.loses))} {Fore.YELLOW+Style.BRIGHT}| {Fore.RED+Style.BRIGHT}[ Battles Count ] {split_chunk(str(battle.wins + battle.loses))} {Fore.YELLOW+Style.BRIGHT}| {Fore.WHITE+Style.BRIGHT}[ Winrate ] {battle.winRate:.2f}%")
-    print(f"👻 {Fore.YELLOW+Style.BRIGHT}[ Fight Stats ]\t: {Fore.GREEN+Style.BRIGHT}[ Wins Reward ] {split_chunk(str(battle.rewardWins))} {Fore.YELLOW+Style.BRIGHT}| {Fore.BLUE+Style.BRIGHT}[ Loses Reward ] {split_chunk(str(battle.rewardLoses))} {Fore.YELLOW+Style.BRIGHT}| {Fore.RED+Style.BRIGHT}[ Total Earned ] {split_chunk(str(battle.rewardWins + battle.rewardLoses))}")
-    
+    user = Pixel()
+    users = user.getUsers()
+
+    print(f"👻 {Fore.CYAN+Style.BRIGHT}[ {users.get('username', 'Unknown')} ]")
+    print(f"💰 {Fore.YELLOW+Style.BRIGHT}[ {split_chunk(str(int(users['clicksCount'])))} Coins ]")
+    print(f"🍏 {Fore.GREEN+Style.BRIGHT}[ {split_chunk(str(int(battle.wins)))} Wins ]"
+          f"{Fore.WHITE+Style.BRIGHT} | "
+          f"🍎 {Fore.RED+Style.BRIGHT}[ {split_chunk(str(int(battle.loses)))} Loses ]"
+          f"{Fore.WHITE+Style.BRIGHT} | "
+          f"⚽️ {Fore.YELLOW+Style.BRIGHT}[ Winrate ] {battle.winRate:.2f}%")
+    print(f"🍏 {Fore.GREEN+Style.BRIGHT}[ {split_chunk(str(int(battle.rewardWins)))} Wins Reward ]"
+          f"{Fore.WHITE+Style.BRIGHT} | "
+          f"🍎 {Fore.RED+Style.BRIGHT}[ {split_chunk(str(int(battle.rewardLoses)))} Loses Reward ]"
+          f"{Fore.WHITE+Style.BRIGHT} | "
+          f"💰 {Fore.YELLOW+Style.BRIGHT}[ {split_chunk(str(int(battle.rewardWins + battle.rewardLoses)))} Total Earned ]")
+
     await battle.connect()
     del battle
 

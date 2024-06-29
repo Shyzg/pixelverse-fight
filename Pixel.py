@@ -34,14 +34,3 @@ class Pixel:
             return print(f"🍓 {Fore.RED+Style.BRIGHT}[ Error getUsers() ]\t: {e}")
         except requests.RequestException as e:
             return print(f"🍓 {Fore.RED+Style.BRIGHT}[ Error getUsers() ]\t: {e}")
-
-    def getStats(self):
-        url = "https://api-clicker.pixelverse.xyz/api/battles/my/stats"
-        try:
-            req = requests.get(url, headers=self.headers)
-            req.raise_for_status()
-            return req.json()
-        except json.JSONDecodeError as e:
-            return print(f"🍓 {Fore.RED+Style.BRIGHT}[ Error getStats() ]\t: {e}")
-        except requests.RequestException as e:
-            return print(f"🍓 {Fore.RED+Style.BRIGHT}[ Error getStats() ]\t: {e}")

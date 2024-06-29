@@ -21,10 +21,10 @@ class Battle:
     def __init__(self):
         with open('config.json', 'r') as file:
             config = json.load(file)
-        
+
+        self.initData = config['initData']
         self.secret = config['secret']
         self.tgId = config['tgId']
-        self.initData = config['initData']
         self.websocket: websockets.WebSocketClientProtocol = None
         self.battleId = ""
         self.superHit = False
@@ -37,20 +37,21 @@ class Battle:
     async def sendHit(self):
         while not self.stop_event.is_set():
             if self.superHit:
-                await asyncio.sleep(0.1)
+                await asyncio.sleep(0.4)
                 continue
-            
+
             content = [
                 "HIT",
                 {
                     "battleId": self.battleId
                 }
             ]
+
             try:
                 await self.websocket.send(f"42{json.dumps(content)}")
             except:
                 return
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(0.11)
 
     async def listenerMsg(self):
         while not self.stop_event.is_set():
@@ -62,9 +63,8 @@ class Battle:
 
             if data.startswith('42'):
                 data = json.loads(data[2:])
-                print(data)
                 if data[0] == "HIT":
-                    print(f"🤬 {Fore.CYAN+Style.BRIGHT}[ Fight ]\t\t: {self.player1['name']} ({data[1]['player1']['energy']}) 👀 ({data[1]['player2']['energy']}) {self.player2['name']}")
+                    print(f"🤬 {Fore.CYAN+Style.BRIGHT}[ {self.player1['name']} ] ({data[1]['player1']['energy']}) 👀 ({data[1]['player2']['energy']}) [ {self.player2['name']} ]")
                 elif data[0] == "SET_SUPER_HIT_PREPARE":
                     self.superHit = True
                 elif data[0] == "SET_SUPER_HIT_ATTACK_ZONE":
@@ -75,6 +75,7 @@ class Battle:
                             "zone": randint(1, 4)
                         }
                     ]
+
                     await self.websocket.send(f"42{json.dumps(content)}")
                     self.strike['attack'] = True
                 elif data[0] == "SET_SUPER_HIT_DEFEND_ZONE":
@@ -85,21 +86,20 @@ class Battle:
                             "zone": randint(1, 4)
                         }
                     ]
+
                     await self.websocket.send(f"42{json.dumps(content)}")
                     self.strike['defense'] = True
                 elif data[0] == "ENEMY_LEAVED":
-                    return
+                    pass
                 elif data[0] == "END":
                     if data[1]['result'] == "WIN":
                         Battle.wins += 1
                         Battle.rewardWins += data[1]['reward']
-                        print(f"🍏 {Fore.CYAN+Style.BRIGHT}[ Fight ]\t\t: [ Result ] {data[1]['result']} | [ Reward ] {split_chunk(str(data[1]['reward']))} Coins")
                     else:
                         Battle.loses += 1
                         Battle.rewardLoses -= data[1]['reward']
-                        print(f"🍎 {Fore.CYAN+Style.BRIGHT}[ Fight ]\t\t: [ Result ] {data[1]['result']} | [ Reward ] -{split_chunk(str(data[1]['reward']))} Coins")
                     Battle.winRate = (Battle.wins / (Battle.wins + Battle.loses)) * 100
-                    await asyncio.sleep(0.5)
+                    
                     await self.websocket.recv()
                     self.stop_event.set()
                     return
@@ -111,7 +111,6 @@ class Battle:
                         await self.websocket.recv()
                         await self.websocket.send("3")
                         await self.websocket.recv()
-
                         self.superHit = False
                 except:
                     pass
@@ -122,9 +121,9 @@ class Battle:
             self.websocket = websocket
             data = await websocket.recv()
             content = {
-                "tg-id": self.tgId,
+                "initData": self.initData,
                 "secret": self.secret,
-                "initData": self.initData
+                "tg-id": self.tgId
             }
 
             await websocket.send(f"40{json.dumps(content)}")
@@ -140,11 +139,27 @@ class Battle:
                 "name": data[1]['player2']['username']
             }
 
-            print(f"🤪 {Fore.CYAN+Style.BRIGHT}[ Fight Profile ]\t: {Fore.RED+Style.BRIGHT}[ Username ] {data[1]['player1']['username']} {Fore.YELLOW+Style.BRIGHT}| {Fore.GREEN+Style.BRIGHT}[ Level ] {data[1]['player1']['level']} {Fore.YELLOW+Style.BRIGHT}| {Fore.BLUE+Style.BRIGHT}[ Balance ] {split_chunk(str(int(data[1]['player1']['balance'])))} {Fore.YELLOW+Style.BRIGHT}| {Fore.CYAN+Style.BRIGHT}[ Energy ] {split_chunk(str(int(data[1]['player1']['energy'])))} {Fore.YELLOW+Style.BRIGHT}| {Fore.MAGENTA+Style.BRIGHT}[ Damage ] {data[1]['player1']['damage']}")
-            print(f"🤪 {Fore.CYAN+Style.BRIGHT}[ Fight Profile ]\t: {Fore.RED+Style.BRIGHT}[ Username ] {data[1]['player2']['username']} {Fore.YELLOW+Style.BRIGHT}| {Fore.GREEN+Style.BRIGHT}[ Level ] {data[1]['player2']['level']} {Fore.YELLOW+Style.BRIGHT}| {Fore.BLUE+Style.BRIGHT}[ Balance ] {split_chunk(str(int(data[1]['player2']['balance'])))} {Fore.YELLOW+Style.BRIGHT}| {Fore.CYAN+Style.BRIGHT}[ Energy ] {split_chunk(str(int(data[1]['player2']['energy'])))} {Fore.YELLOW+Style.BRIGHT}| {Fore.MAGENTA+Style.BRIGHT}[ Damage ] {data[1]['player2']['damage']}")
+            print(f"🤪 {Fore.RED+Style.BRIGHT}[ {data[1]['player1']['username']} ] "
+                  f"{Fore.WHITE+Style.BRIGHT}| "
+                  f"{Fore.BLUE+Style.BRIGHT}[ {split_chunk(str(int(data[1]['player1']['balance'])))} Coins ]"
+                  f"{Fore.WHITE+Style.BRIGHT} | "
+                  f"{Fore.GREEN+Style.BRIGHT}[ Level {data[1]['player1']['level']} ]"
+                  f"{Fore.WHITE+Style.BRIGHT} | "
+                  f"{Fore.CYAN+Style.BRIGHT}[ Energy {split_chunk(str(int(data[1]['player1']['energy'])))} ]"
+                  f"{Fore.WHITE+Style.BRIGHT} | "
+                  f"{Fore.MAGENTA+Style.BRIGHT}[ Damage {split_chunk(str(int(data[1]['player1']['damage'])))} ]")
+            print(f"🤪 {Fore.RED+Style.BRIGHT}[ {data[1]['player2']['username']} ]"
+                  f"{Fore.WHITE+Style.BRIGHT} | "
+                  f"{Fore.BLUE+Style.BRIGHT}[ {split_chunk(str(int(data[1]['player2']['balance'])))} Coins ]"
+                  f"{Fore.WHITE+Style.BRIGHT} | "
+                  f"{Fore.GREEN+Style.BRIGHT}[ Level {data[1]['player2']['level']} ]"
+                  f"{Fore.WHITE+Style.BRIGHT} | "
+                  f"{Fore.CYAN+Style.BRIGHT}[ Energy {split_chunk(str(int(data[1]['player2']['energy'])))} ]"
+                  f"{Fore.WHITE+Style.BRIGHT} | "
+                  f"{Fore.MAGENTA+Style.BRIGHT}[ Damage {split_chunk(str(int(data[1]['player2']['damage'])))} ]")
 
             for i in range(5, 0, -1):
-                print(f"\r⏰ {Fore.YELLOW+Style.BRIGHT}[ Fight ]\t\t: Pertarungan Dimulai Dalam {i} Detik", end="\r", flush=True)
+                print(f"\r⏰ {Fore.YELLOW+Style.BRIGHT}[ Pertarungan Dimulai Dalam {i} Detik ]", end="\r", flush=True)
                 await asyncio.sleep(1)
             
             print('')
