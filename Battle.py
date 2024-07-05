@@ -90,7 +90,9 @@ class Battle:
                     await self.websocket.send(f"42{json.dumps(content)}")
                     self.strike['defense'] = True
                 elif data[0] == "ENEMY_LEAVED":
-                    pass
+                    await self.websocket.recv()
+                    self.stop_event.set()
+                    return
                 elif data[0] == "END":
                     if data[1]['result'] == "WIN":
                         Battle.wins += 1
@@ -99,10 +101,11 @@ class Battle:
                         Battle.loses += 1
                         Battle.rewardLoses -= data[1]['reward']
                     Battle.winRate = (Battle.wins / (Battle.wins + Battle.loses)) * 100
-                    
+
                     await self.websocket.recv()
                     self.stop_event.set()
                     return
+
                 try:
                     if ( self.strike['attack'] and not self.strike['defense'] ) or ( self.strike['defense'] and not self.strike['attack'] ):
                         await self.websocket.recv()
@@ -128,7 +131,7 @@ class Battle:
 
             await websocket.send(f"40{json.dumps(content)}")
             await websocket.recv()
-            
+
             data = await websocket.recv()
             data = json.loads(data[2:])
             self.battleId = data[1]['battleId']
@@ -161,9 +164,9 @@ class Battle:
             for i in range(5, 0, -1):
                 print(f"\r⏰ {Fore.YELLOW+Style.BRIGHT}[ Pertarungan Dimulai Dalam {i} Detik ]", end="\r", flush=True)
                 await asyncio.sleep(1)
-            
+
             print('')
-            
+
             listenerMsgTask = asyncio.create_task(self.listenerMsg())
             hitTask = asyncio.create_task(self.sendHit())
 
