@@ -2,7 +2,7 @@ import asyncio
 import json
 import websockets
 from colorama import Fore, Style
-from random import randint
+from random import randint, uniform
 
 
 def split_chunk(var):
@@ -50,9 +50,9 @@ class Battle:
 
             try:
                 await self.websocket.send(f"42{json.dumps(content)}")
+                await asyncio.sleep(uniform(0.11, 0.115))
             except:
                 return
-            await asyncio.sleep(0.11)
 
     async def listenerMsg(self):
         while not self.stop_event.is_set():
@@ -64,6 +64,7 @@ class Battle:
 
             if data.startswith('42'):
                 data = json.loads(data[2:])
+                print(data)
                 if data[0] == "HIT":
                     print(f"🤬 {Fore.CYAN+Style.BRIGHT}[ {self.player1['name']} ] ({data[1]['player1']['energy']}) 👀 ({data[1]['player2']['energy']}) [ {self.player2['name']} ]")
                 elif data[0] == "SET_SUPER_HIT_PREPARE":
@@ -160,12 +161,6 @@ class Battle:
                   f"{Fore.CYAN+Style.BRIGHT}[ Energy {split_chunk(str(int(data[1]['player2']['energy'])))} ]"
                   f"{Fore.WHITE+Style.BRIGHT} | "
                   f"{Fore.MAGENTA+Style.BRIGHT}[ Damage {split_chunk(str(int(data[1]['player2']['damage'])))} ]")
-
-            for i in range(5, 0, -1):
-                print(f"\r⏰ {Fore.YELLOW+Style.BRIGHT}[ Pertarungan Dimulai Dalam {i} Detik ]", end="\r", flush=True)
-                await asyncio.sleep(1)
-
-            print('')
 
             listenerMsgTask = asyncio.create_task(self.listenerMsg())
             hitTask = asyncio.create_task(self.sendHit())

@@ -32,7 +32,7 @@ async def main():
           f"{Fore.WHITE+Style.BRIGHT} | "
           f"🍎 {Fore.RED+Style.BRIGHT}[ {split_chunk(str(int(battle.loses)))} Loses ]"
           f"{Fore.WHITE+Style.BRIGHT} | "
-          f"⚽️ {Fore.YELLOW+Style.BRIGHT}[ winrate ] {battle.winrate:.2f}%")
+          f"⚽️ {Fore.YELLOW+Style.BRIGHT}[ Winrate ] {battle.winrate:.2f}%")
     print(f"🍏 {Fore.GREEN+Style.BRIGHT}[ {split_chunk(str(int(battle.reward_wins)))} Wins Reward ]"
           f"{Fore.WHITE+Style.BRIGHT} | "
           f"🍎 {Fore.RED+Style.BRIGHT}[ {split_chunk(str(int(battle.reward_loses)))} Loses Reward ]"
@@ -49,5 +49,5 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             sys.exit(0)
         except Exception as e:
-            print(f"🍓 {Fore.RED+Style.BRIGHT}[ Error ]\t\t: {type(e).__name__} {e}")
+            print(f"🍓 {Fore.RED+Style.BRIGHT}[ {type(e).__name__} {e} ]")
         clear()
