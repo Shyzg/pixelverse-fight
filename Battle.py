@@ -4,6 +4,7 @@ import websockets
 from colorama import Fore, Style
 from random import randint
 
+
 def split_chunk(var):
     if isinstance(var, int):
         var = str(var)
@@ -14,9 +15,9 @@ def split_chunk(var):
 class Battle:
     wins = 0
     loses = 0
-    rewardWins = 0
-    rewardLoses = 0
-    winRate = 0
+    reward_wins = 0
+    reward_loses = 0
+    winrate = 0
 
     def __init__(self):
         with open('config.json', 'r') as file:
@@ -37,7 +38,7 @@ class Battle:
     async def sendHit(self):
         while not self.stop_event.is_set():
             if self.superHit:
-                await asyncio.sleep(0.4)
+                await asyncio.sleep(0.3)
                 continue
 
             content = [
@@ -96,12 +97,11 @@ class Battle:
                 elif data[0] == "END":
                     if data[1]['result'] == "WIN":
                         Battle.wins += 1
-                        Battle.rewardWins += data[1]['reward']
+                        Battle.reward_wins += data[1]['reward']
                     else:
                         Battle.loses += 1
-                        Battle.rewardLoses -= data[1]['reward']
-                    Battle.winRate = (Battle.wins / (Battle.wins + Battle.loses)) * 100
-
+                        Battle.reward_loses -= data[1]['reward']
+                    Battle.winrate = (Battle.wins / (Battle.wins + Battle.loses)) * 100
                     await self.websocket.recv()
                     self.stop_event.set()
                     return

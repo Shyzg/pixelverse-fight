@@ -5,6 +5,7 @@ from Battle import Battle
 from Pixel import Pixel
 from colorama import Fore, Style, init
 
+
 def clear():
     if os.name == 'nt':
         os.system('cls')
@@ -24,18 +25,19 @@ async def main():
     user = Pixel()
     users = user.getUsers()
 
-    print(f"👻 {Fore.CYAN+Style.BRIGHT}[ {users.get('username', 'Unknown')} ]")
-    print(f"💰 {Fore.YELLOW+Style.BRIGHT}[ {split_chunk(str(int(users['clicksCount'])))} Coins ]")
+    print(f"👻 {Fore.CYAN+Style.BRIGHT}[ {users.get('username', 'Unknown')} ]"
+          f"{Fore.WHITE+Style.BRIGHT} | "
+          f"💰 {Fore.YELLOW+Style.BRIGHT}[ {split_chunk(str(int(users['clicksCount'])))} Coins ]")
     print(f"🍏 {Fore.GREEN+Style.BRIGHT}[ {split_chunk(str(int(battle.wins)))} Wins ]"
           f"{Fore.WHITE+Style.BRIGHT} | "
           f"🍎 {Fore.RED+Style.BRIGHT}[ {split_chunk(str(int(battle.loses)))} Loses ]"
           f"{Fore.WHITE+Style.BRIGHT} | "
-          f"⚽️ {Fore.YELLOW+Style.BRIGHT}[ Winrate ] {battle.winRate:.2f}%")
-    print(f"🍏 {Fore.GREEN+Style.BRIGHT}[ {split_chunk(str(int(battle.rewardWins)))} Wins Reward ]"
+          f"⚽️ {Fore.YELLOW+Style.BRIGHT}[ winrate ] {battle.winrate:.2f}%")
+    print(f"🍏 {Fore.GREEN+Style.BRIGHT}[ {split_chunk(str(int(battle.reward_wins)))} Wins Reward ]"
           f"{Fore.WHITE+Style.BRIGHT} | "
-          f"🍎 {Fore.RED+Style.BRIGHT}[ {split_chunk(str(int(battle.rewardLoses)))} Loses Reward ]"
+          f"🍎 {Fore.RED+Style.BRIGHT}[ {split_chunk(str(int(battle.reward_loses)))} Loses Reward ]"
           f"{Fore.WHITE+Style.BRIGHT} | "
-          f"💰 {Fore.YELLOW+Style.BRIGHT}[ {split_chunk(str(int(battle.rewardWins + battle.rewardLoses)))} Total Earned ]")
+          f"💰 {Fore.YELLOW+Style.BRIGHT}[ {split_chunk(str(int(battle.reward_wins + battle.reward_loses)))} Total Earned ]")
 
     await battle.connect()
     del battle

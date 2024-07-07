@@ -2,11 +2,12 @@ import json
 import requests
 from colorama import Fore, Style
 
+
 class Pixel:
     def __init__(self):
         with open('config.json', 'r') as file:
             config = json.load(file)
-        
+
         self.headers = {
             "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
             "Connection": "keep-alive",
@@ -30,7 +31,5 @@ class Pixel:
             req = requests.get(url, headers=self.headers)
             req.raise_for_status()
             return req.json()
-        except json.JSONDecodeError as e:
-            return print(f"🍓 {Fore.RED+Style.BRIGHT}[ Error getUsers() ]\t: {e}")
-        except requests.RequestException as e:
-            return print(f"🍓 {Fore.RED+Style.BRIGHT}[ Error getUsers() ]\t: {e}")
+        except (json.JSONDecodeError, requests.RequestException) as e:
+            return print(f"🍓 {Fore.RED+Style.BRIGHT}[ {e} ]")
