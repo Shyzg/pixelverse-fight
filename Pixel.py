@@ -25,7 +25,7 @@ class Pixel:
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)"
         }
 
-    def getUsers(self):
+    def get_users(self):
         url = "https://api-clicker.pixelverse.xyz/api/users"
         try:
             req = requests.get(url, headers=self.headers)

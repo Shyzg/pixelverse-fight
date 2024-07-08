@@ -4,6 +4,7 @@ import sys
 from Battle import Battle
 from Pixel import Pixel
 from colorama import Fore, Style, init
+from datetime import datetime
 
 
 def clear():
@@ -23,7 +24,7 @@ async def main():
     init()
     battle = Battle()
     user = Pixel()
-    users = user.getUsers()
+    users = user.get_users()
 
     print(f"👻 {Fore.CYAN+Style.BRIGHT}[ {users.get('username', 'Unknown')} ]"
           f"{Fore.WHITE+Style.BRIGHT} | "
@@ -38,6 +39,10 @@ async def main():
           f"🍎 {Fore.RED+Style.BRIGHT}[ {split_chunk(str(int(battle.reward_loses)))} Loses Reward ]"
           f"{Fore.WHITE+Style.BRIGHT} | "
           f"💰 {Fore.YELLOW+Style.BRIGHT}[ {split_chunk(str(int(battle.reward_wins + battle.reward_loses)))} Total Earned ]")
+
+    current_date = datetime.now()
+    if current_date.hour >= 23:
+        await asyncio.sleep(3600)
 
     await battle.connect()
     del battle
